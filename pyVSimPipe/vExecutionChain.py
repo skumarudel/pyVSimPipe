@@ -61,6 +61,7 @@ class SingularityExecutionChain(ExecutionChain):
                    'ioreader_bin':'/software/corsikaSimulationTools/corsikaIOreader',
                    'groptics_bin':'/software/GrOptics/grOptics',
                    'care_bin':'/software/CARE/CameraAndReadout',
+                   'data_dir':'$HOME/'
                   }
 
         super().__init__(run_env,qsub_setting)
@@ -76,21 +77,24 @@ class SingularityExecutionChain(ExecutionChain):
        
     def get_script(self,run_script_location):
         singularity_setting = self.__singularity_setting__  
-        script_text_template="{qsub_header}"\
-                             "{create_local}"\
+        script_text_template="{qsub_header}\n"\
+                             "cd {cur_dir}\n"\
+                             "{create_local}\n"\
                              "singularity exec -H ./:/home  -B {scratch}:/local-scratch {image_file} /bin/bash {run_script_location}" 
-        create_local = 'mkdir ./local/\n'
+        create_local = 'mkdir -p ./local/\n'
         if(singularity_setting['scratch_dir'] != "None"):
             script_text = script_text_template.format(scratch=singularity_setting['scratch_dir'],
                                                       qsub_header = self.get_qsub_header(),
                                                       image_file  = singularity_setting['image_file'],
                                                       run_script_location = run_script_location,
+                                                      cur_dir=path.realpath(path.curdir),
                                                       create_local='') 
         else:
              script_text = script_text_template.format(scratch='./local/',
                                                       qsub_header = self.get_qsub_header(),
                                                       image_file  = singularity_setting['image_file'],
                                                       run_script_location = run_script_location,
+                                                      cur_dir=path.realpath(path.curdir),
                                                       create_local=create_local) 
        
         return script_text

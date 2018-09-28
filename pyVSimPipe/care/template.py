@@ -60,6 +60,7 @@ corsika_file={corsika_file}
 local_dir={local_dir}
 GrOpticsConfig={groptics_config}
 CARE_Config={care_config}
+ATM_data={atm_data}
 pilot_file={pilot_file}
 season={season}
 
@@ -78,7 +79,8 @@ mkdir -p $local_dir
 mkdir -p $log_dir
 cd $local_dir
 ln -sT $GrOpticsConfig ./GrOpticsConfig
-ln -sT $Care_Config ./CARE_Config
+ln -sT $CARE_Config ./CARE_config
+ln -sT $ATM_data ./data 
 
 # Generate input file
 cat > $pilot_file <<- EOM
@@ -94,11 +96,12 @@ fi
 
 $ioreader_bin -queff 0.5 -cors $corsika_file -seed $(date +%s$f) -grisu stdout -abs $abs_file -cfg ./GrOpticsConfig/IOReaderDetectorConfigV6.txt | $groptics_bin -of ./"$name_base".groptics.root  -p $pilot_file   &> $log_dir/"$name_base".groptics.log
 
-$care_bin NSBRATEPERPIXEL "0 $noise" --seed $(date +%s$f) --configfile ./CARE_config/CARE_V6_Std.txt --outputfile "$name_base" --inputfile "$name_base".groptics.root --vbfrunnumber $runnum  --writepedestals 1 --notraces &> $log_dir/"$name_base".care.log 
+$care_bin NSBRATEPERPIXEL "0 $NOISE" --seed $(date +%s$f) --configfile ./CARE_config/CARE_V6_Std.txt --outputfile "$name_base" --inputfile "$name_base".groptics.root --vbfrunnumber $runnum  --writepedestals 1 --notraces &> $log_dir/"$name_base".care.log 
 
 mv "$name_base".vbf $output_dir/ 
-unlink $GrOpticsConfig ./GrOpticsConfig
-unlink $Care_Config ./CARE_Config
+unlink ./GrOpticsConfig
+unlink ./CARE_config
+unlink ./data
 
 rm ./*
  

@@ -30,6 +30,12 @@ def setup():
         copytree("{}/share/CARE_config".format(file_path),"./CARE_config") 
     if(not path.exists("./GrOpticsConfig")):
         copytree("{}/share/GrOpticsConfig".format(file_path),"./GrOpticsConfig") 
+    if(not path.exists("./data")):
+        copytree("{}/share/data".format(file_path),"./data") 
+    # copy default order file
+    if(not path.exists("./order.csv")):
+        copyfile("{}/share/order.csv".format(file_path),"order.csv")
+
     # copy default config file
     if(not path.exists("./config.ini")):
         copyfile("{}/share/config.ini".format(file_path),"config.ini")
@@ -79,52 +85,54 @@ class LaunchControl:
                                         is_singularity=self.__is_singularity__)                    
         self.missle = builder.get_execution_chain() 
 
-    def launch(self):
+    def launch(self,dry_run = False):
         logger.debug('Launch!')
         if(self.__is_singularity__):
             logger.debug('Singularity Mode.')
-            self.__launch_singularity__()
+            self.__launch_singularity__(dry_run)
         else:
             logger.debug('Normal Mode.')
-            self.__launch__() 
+            self.__launch__(dry_run) 
         # Write job record to json file
         with open('qsub_record.json',"w") as f:
-            f.write(json.dumps([x.__dict__ for x in self.__jobs__]))         
+            f.write(json.dumps([x.get_data_as_dict() for x in self.__jobs__]))         
 
-    def __launch_singularity__(self):
+    def __launch_singularity__(self,dry_run=False):
         jobs = []
         for c in self.missle:
             name = c.get_name()
             with open(".qsub/run_script/{}.container.qsub".format(name),'w') as f:
                 f.write(c.get_run_script())   
             with open(".qsub/{}.qsub".format(name),'w') as f:
-                f.write(c.get_script(path.realpath(".qsub/{}.qsub".format(name))))
+                f.write(c.get_script(".qsub/run_script/{}.container.qsub".format(name)))
             script_name = ".qsub/{}.qsub".format(name) 
-            #process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
-            #out = process.stdout.readlines()
-            #err = process.stderr.readlines()
-            #for ol in out:
-            #    jobs.append(JobRecord(ol,[ee.__exit__ for ee in c.__executions__]))
-            #    click.secho(ol.decode().strip(),fg='green')
-            #for el in err:
-            #    click.secho(el.decode().strip(),fg='red')
+            if(not dry_run):
+                process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
+                out = process.stdout.readlines()
+                err = process.stderr.readlines()
+                for ol in out:
+                    jobs.append(JobRecord(ol.decode().strip(),[ee.__exit__ for ee in c.__executions__]))
+                    click.secho(ol.decode().strip(),fg='green')
+                for el in err:
+                    click.secho(el.decode().strip(),fg='red')
         self.__jobs__ = jobs
             
-    def __launch__(self):
+    def __launch__(self,dry_run=False):
         jobs = []
         for c in self.missle:
             name = c.get_name()
             with open(".qsub/{}.qsub".format(name)) as f:
                 f.write(c.get_script())
             script_name = ".qsub/{}.qsub".format(name) 
-            #process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
-            #out = process.stdout.readlines()
-            #err = process.stderr.readlines()
-            #for ol in out:
-            #    jobs.append(JobRecord(ol,[ee.__exit__ for ee in c.__executions__]))
-            #    click.secho(ol.decode().strip(),fg='green')
-            #for el in err:
-            #    click.secho(el.decode().strip(),fg='red')
+            if(not dry_run):
+                process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
+                out = process.stdout.readlines()
+                err = process.stderr.readlines()
+                for ol in out:
+                    jobs.append(JobRecord(ol.decode().strip(),[ee.__exit__ for ee in c.__executions__]))
+                    click.secho(ol.decode().strip(),fg='green')
+                for el in err:
+                    click.secho(el.decode().strip(),fg='red')
         self.__jobs__ = jobs
 
     def kill(self):

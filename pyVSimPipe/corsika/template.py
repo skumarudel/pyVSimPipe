@@ -57,23 +57,23 @@ output_file={exit}
 
 #Create directories
 
-data_dir=$(readlink -f $(dirname $output_file))
-log_dir=$(readlink -f $(dirname $log_file))
-input_dir=$(readlink -f $(dirname $input_file))
+data_dir=$(dirname $output_file)
+log_dir=$(dirname $log_file)
+input_dir=$(dirname $input_file)
 
 mkdir -p $data_dir
 mkdir -p $log_dir
 mkdir -p $input_dir
 mkdir -p $local_dir
 
-output_file_tmp=$local_dir/$(basename $ouput_file)
+output_file_tmp=$local_dir/$(basename $output_file)
 
 # Generate input file
 cat > $input_file <<- EOM
 {input_file_text}
 EOM
 
-cd $(dirname $corsika_dir)
+cd $(dirname $corsika_bin)
 $corsika_bin < $input_file &> $log_file
 # done 
 mv $output_file_tmp $output_file

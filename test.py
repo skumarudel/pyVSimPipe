@@ -78,7 +78,7 @@ def test_lauch_control():
     setup()
     control = LaunchControl(config_file,order_file)
     control.buildMissle()
-    control.launch()
+    control.launch(dry_run=False)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

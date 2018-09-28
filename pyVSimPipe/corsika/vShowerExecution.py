@@ -19,17 +19,25 @@ class ShowerExecution(Execution):
                                                  s1=shower_property.seed[1],
                                                  s2=shower_property.seed[2],
                                                  s3=shower_property.seed[3])
-
+       if (run_env['data_dir']  == 'None'):
+           data_dir = path.realpath(path.curdir)
+       else:
+           data_dir = run_env['data_dir'] 
        exit='{data_dir}/Shower/ATM{atm}/Ze_{ze}/{fname}.tel'.format(atm=shower_property.atm,
                                                                     ze=shower_property.ze,
                                                                     fname=ofname,
-                                                                    data_dir = path.realpath(path.curdir))
+                                                                    data_dir = data_dir)
        self.__shower_property__  = shower_property
        self.__ofname_base__ = ofname
        super().__init__(run_env,None,exit) 
 
     def get_script(self):
         run_env = self.__run_env__
+        if (run_env['data_dir']  == 'None'):
+            data_dir = path.realpath(path.curdir)
+        else:
+            data_dir = run_env['data_dir'] 
+
         sp = self.__shower_property__
         # initialize directory path name
         if(run_env['scratch_dir'] != "None"):
@@ -39,13 +47,13 @@ class ShowerExecution(Execution):
         else:
             local_dir='{scratch_dir}/Shower/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
                                                                       ze=sp.ze,
-                                                                      scratch_dir='{}/local/'.format(path.realpath(path.curdir)))  
+                                                                      scratch_dir='{}/local/'.format(data_dir))  
 
                                         
-        input_file_path=path.basename(self.__exit__)
+        input_file_path=path.dirname(self.__exit__)
         log_dir='{data_dir}/log/Shower/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
                                                                  ze=sp.ze,
-                                                                 data_dir=path.realpath(path.curdir))    
+                                                                 data_dir=data_dir)    
         # Generate input file text
         primary_code = particle_code[sp.primary]
         runnum=int('{:<05d}'.format(primary_code))        

@@ -19,11 +19,16 @@ class DetectorExecution(Execution):
                                                  s1=shower_property.seed[1],
                                                  s2=shower_property.seed[2],
                                                  s3=shower_property.seed[3])
+
+       if (run_env['data_dir']  == 'None'):
+           data_dir = path.realpath(path.curdir)
+       else:
+           data_dir = run_env['data_dir']
        if(existed_entry is None):
            entry='{data_dir}/Shower/ATM{atm}/Ze_{ze}/{fname}.tel'.format(atm=shower_property.atm,
                                                                             ze=shower_property.ze,
                                                                             fname=ifname,
-                                                                            data_dir=path.realpath(path.curdir))
+                                                                            data_dir=data_dir)
        else:
            entry = existed_entry 
 
@@ -46,7 +51,7 @@ class DetectorExecution(Execution):
        exit = '{data_dir}/CARE/{epoch}/ATM{atm}/{fname}'.format(epoch=detector_property.epoch,
                                                                atm=shower_property.atm,
                                                                fname=ofname,
-                                                               data_dir=path.realpath(path.curdir)) 
+                                                               data_dir=data_dir) 
        super().__init__(run_env,entry,exit) 
        self.shower_property   = shower_property
        self.detector_property = detector_property
@@ -66,6 +71,10 @@ class DetectorExecution(Execution):
         pilot_file_text = pilot_file_template.format(wobble_north=wobble_north,
                                                 wobble_east=wobble_east) 
         run_env = self.__run_env__
+        if (run_env['data_dir']  == 'None'):
+            data_dir = path.realpath(path.curdir)
+        else:
+            data_dir = run_env['data_dir']
         ioreader_bin = run_env['ioreader_bin']
         groptics_bin = run_env['groptics_bin']   
         care_bin     = run_env['care_bin']
@@ -76,11 +85,11 @@ class DetectorExecution(Execution):
         else:
             local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
                                                                       ze=sp.ze,
-                                                                      scratch_dir='{}/local/'.format(path.realpath(path.curdir)))
+                                                                      scratch_dir='{}/local/'.format(data_dir))
 
         log_dir='{data_dir}/log/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
                                                                  ze=sp.ze,
-                                                                 data_dir=path.realpath(path.curdir))
+                                                                 data_dir=data_dir)
         if(sp.atm == 61):
             season       =  'w'
         elif(sp.atm == 62):
@@ -97,8 +106,9 @@ class DetectorExecution(Execution):
                                         care_bin = care_bin,
                                         corsika_file = self.__entry__,
                                         local_dir = local_dir,
-                                        groptics_config='{}/GrOpticsConfig'.format(path.realpath(path.curdir)),
-                                        care_config='{}/CARE_Config'.format(path.realpath(path.curdir)),
+                                        groptics_config='{}/GrOpticsConfig'.format(data_dir),
+                                        care_config='{}/CARE_config'.format(data_dir),
+                                        atm_data='{}/data'.format(data_dir),
                                         pilot_file='{}/{}.plt'.format(local_dir,output_file_name_base),
                                         season=season,
                                         noise=noise,
