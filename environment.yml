@@ -1,0 +1,4 @@
+name: pyVSimPipe
+dependencies:
+    - python>= 3.5
+    - click
