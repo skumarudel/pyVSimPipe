@@ -23,7 +23,22 @@ def validate_init():
 def cli(log_level, show_warnings):
     """VSimPipe 
     \b
-    Simple command line tools for running simulations.   
+    Simple command line tools for running simulations using qsub.
+
+    Be minded you need to have singularity installed to use singularity mode (default).   
+
+    To start a new set of simulations first do:
+
+    > VSimPipe init
+
+    This will generate a set of default configuration files and a order file (order.csv).
+
+    Next, edit the necessary fields in the config file and order file.
+
+    Now, you are ready to send the simulations out:
+
+    > VSimPipe run
+    
     """
     logging.basicConfig(level=log_level)
 
