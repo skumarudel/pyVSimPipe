@@ -1,0 +1,76 @@
+from pyVSimPipe.vExecutionChain import Execution
+from pyVSimPipe.corsika.template import script_template,input_file_template
+from os import path
+
+particle_code={'gamma':1,'electron':3,'proton':14,'helium':402}
+
+class ShowerExecution(Execution):
+    def __init__(self,shower_property,
+                      run_env):
+       output_file_name_template = 'corsika_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}'
+       ofname = output_file_name_template.format(atm=shower_property.atm,
+                                                 ze =shower_property.ze,
+                                                 elow =shower_property.elow,
+                                                 ehigh=shower_property.ehigh,
+                                                 index=shower_property.index,
+                                                 reuse=shower_property.reuse,
+                                                 nshower=shower_property.nshower,
+                                                 s0=shower_property.seed[0],
+                                                 s1=shower_property.seed[1],
+                                                 s2=shower_property.seed[2],
+                                                 s3=shower_property.seed[3])
+
+       exit='{data_dir}/Shower/ATM{atm}/Ze_{ze}/{fname}.tel'.format(atm=shower_property.atm,
+                                                                    ze=shower_property.ze,
+                                                                    fname=ofname,
+                                                                    data_dir = path.realpath(path.curdir))
+       self.__shower_property__  = shower_property
+       self.__ofname_base__ = ofname
+       super().__init__(run_env,None,exit) 
+
+    def get_script(self):
+        run_env = self.__run_env__
+        sp = self.__shower_property__
+        # initialize directory path name
+        if(run_env['scratch_dir'] != "None"):
+            local_dir='{scratch_dir}/Shower/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
+                                                                      ze=sp.ze,
+                                                                      scratch_dir=run_env['scratch_dir'])  
+        else:
+            local_dir='{scratch_dir}/Shower/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
+                                                                      ze=sp.ze,
+                                                                      scratch_dir='{}/local/'.format(path.realpath(path.curdir)))  
+
+                                        
+        input_file_path=path.basename(self.__exit__)
+        log_dir='{data_dir}/log/Shower/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
+                                                                 ze=sp.ze,
+                                                                 data_dir=path.realpath(path.curdir))    
+        # Generate input file text
+        primary_code = particle_code[sp.primary]
+        runnum=int('{:<05d}'.format(primary_code))        
+        input_file_text = input_file_template.format(runnum=runnum,
+                                                nshower=sp.nshower,
+                                                pid=primary_code,
+                                                elow_GeV=int(sp.elow*1000),
+                                                ehigh_GeV=int(sp.ehigh*1000),
+                                                index=sp.index,
+                                                ze=sp.ze,
+                                                seed=sp.seed[0],
+                                                seed1=sp.seed[1],
+                                                seed2=sp.seed[2],
+                                                seed3=sp.seed[3],
+                                                host=run_env['host'],
+                                                user=run_env['user'],
+                                                atm=sp.atm,
+                                                reuse=sp.reuse,    
+                                                ofname_tmp='{}/{}.tel'.format(local_dir,self.__ofname_base__),
+                                                outdir='{}/'.format(path.dirname(self.__exit__))
+                                               )         
+        script = script_template.format(corsika_bin = run_env['corsika_bin'], 
+                                        input_file='{}/{}.input'.format(input_file_path,self.__ofname_base__),
+                                        log_file='{}/{}.input'.format(log_dir,self.__ofname_base__),
+                                        local_dir=local_dir,
+                                        exit=self.__exit__,
+                                        input_file_text=input_file_text)
+        return script 
