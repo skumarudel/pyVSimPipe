@@ -1,0 +1,4 @@
+include pyVSimPipe/share/*
+include pyVSimPipe/share/CARE_config/*
+include pyVSimPipe/share/GrOpticsConfig/* 
+include pyVSimPipe/share/data/*
