@@ -7,8 +7,9 @@ from os import path
 class DetectorExecution(Execution):
     def __init__(self,shower_property,detector_property,
                       run_env,existed_entry=None):
-       input_file_name_template = 'corsika_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}'
+       input_file_name_template = 'corsika_{primary}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}'
        ifname = input_file_name_template.format(atm=shower_property.atm,
+                                                 primary=shower_property.primary,
                                                  ze =shower_property.ze,
                                                  elow =shower_property.elow,
                                                  ehigh=shower_property.ehigh,
