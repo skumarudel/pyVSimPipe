@@ -33,8 +33,9 @@ class DetectorExecution(Execution):
        else:
            entry = existed_entry 
 
-       output_file_name_template='CARE_{epoch}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}_Wobble_{wobble_angle:.1f}{wobble_dir}_Noise_{noise_level:03d}MHz.vbf' 
+       output_file_name_template='CARE_{primary}_{epoch}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}_Wobble_{wobble_angle:.1f}{wobble_dir}_Noise_{noise_level:03d}MHz.vbf' 
        ofname = output_file_name_template.format(atm=shower_property.atm,
+                                                 primary=shower_property.primary,
                                                  ze =shower_property.ze,
                                                  elow =shower_property.elow,
                                                  ehigh=shower_property.ehigh,
