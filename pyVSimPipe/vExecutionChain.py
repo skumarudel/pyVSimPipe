@@ -1,6 +1,7 @@
 import logging
 from os import path
 from pyVSimPipe.qsub_template import qsub_header_template 
+import json
 import hashlib
 logger  = logging.getLogger(__name__) 
 
@@ -23,9 +24,13 @@ class ExecutionChain(Execution):
 
     def get_qsub_header(self):
         qsub_setting = self.__qsub_setting__ 
+        extra_qsub_directive  = ""
+        for ll in qsub_setting['optional_pbs_directive']:
+           extra_qsub_directive = extra_qsub_directive + "#PBS {}\n".format(ll) 
         qsub_header = qsub_header_template.format(nodes=qsub_setting['nodes'],
                                            ppn  =qsub_setting['ppn'],
                                            name =self.get_name(),
+                                           optional_pbs_directive=extra_qsub_directive,
                                            qsub_dir=path.realpath("./.qsub"),
                                            init_command = qsub_setting['init_command']) 
         return qsub_header

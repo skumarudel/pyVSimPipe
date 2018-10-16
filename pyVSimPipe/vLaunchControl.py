@@ -12,6 +12,7 @@ import click
 import json
 from shutil import copyfile,copytree 
 import logging
+import json
 import sys
 
 # Check python version 
@@ -70,6 +71,7 @@ class LaunchControl:
             self.__run_env__         = config_reader._sections['RUN'] 
 
         self.__qsub_setting__    = config_reader._sections['QSUB'] 
+        self.__qsub_setting__['optional_pbs_directive'] = json.loads(self.__qsub_setting__['optional_pbs_directive'])
         ss =  CSV_source(order_file)
         self.__order__      = VOrder(ss) 
         self.__vbf_inventory__  = vbf_inventory 

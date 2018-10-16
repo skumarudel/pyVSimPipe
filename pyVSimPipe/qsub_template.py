@@ -4,6 +4,7 @@ qsub_header_template='''
 #PBS -N {name} 
 #PBS -o {qsub_dir}/{name}.out
 #PBS -e {qsub_dir}/{name}.err
+{optional_pbs_directive}
 
 {init_command}
 
