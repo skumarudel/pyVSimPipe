@@ -40,7 +40,7 @@ Example:
 wobble North: WOBBLE 0.0 0.5 0.0 31.675
 wobble East : WOBBLE 0.5 0.0 0.0 31.675
 
-* WOBBLE {wobble_north:.1f} {wobble_east:.1f} 0.0 31.675
+* WOBBLE {wobble_north:.1f} {wobble_east:.1f} {diffuse_ext:.1f} 31.675
 
 array configuration file
 * ARRAYCONFIG ./GrOpticsConfig/GrOpticsVERITASArrayConfigV6.txt

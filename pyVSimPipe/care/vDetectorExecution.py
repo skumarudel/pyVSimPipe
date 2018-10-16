@@ -62,16 +62,18 @@ class DetectorExecution(Execution):
         # generate wobble number
         dp = self.detector_property 
         sp = self.shower_property  
-        wobble_sign = {'n':(0,1),
-                       's':(0,-1),
-                       'e':(1,0),
-                       'w':(-1,0)}
+        wobble_sign = {'n':(0,1,0),
+                       's':(0,-1,0),
+                       'e':(1,0,0),
+                       'w':(-1,0,0),
+                       'd':(0,0,1)}
 
-        wn,we = wobble_sign[dp.wobble_dir.strip().lower()]
+        wn,we,de = wobble_sign[dp.wobble_dir.strip().lower()]
         wobble_north = wn*dp.wobble_angle     
         wobble_east  = we*dp.wobble_angle     
+        diffuse_ext  = de*dp.wobble_angle 
         pilot_file_text = pilot_file_template.format(wobble_north=wobble_north,
-                                                wobble_east=wobble_east) 
+                                                wobble_east=wobble_east,diffuse_ext=diffuse_ext) 
         run_env = self.__run_env__
         if (run_env['data_dir']  == 'None'):
             data_dir = path.realpath(path.curdir)
