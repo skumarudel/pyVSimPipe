@@ -48,7 +48,7 @@ class DetectorExecution(Execution):
                                                  s3=shower_property.seed[3],
                                                  wobble_angle=detector_property.wobble_angle,
                                                  wobble_dir=detector_property.wobble_dir,
-                                                 noise_level=detector_property.noise_level,
+                                                 noise_level=int(detector_property.noise_level),
                                                  epoch=detector_property.epoch)
        exit = '{data_dir}/CARE/{epoch}/ATM{atm}/{fname}'.format(epoch=detector_property.epoch,
                                                                atm=shower_property.atm,

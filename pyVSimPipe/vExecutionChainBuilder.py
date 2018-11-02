@@ -2,6 +2,7 @@ from pyVSimPipe.corsika.vShowerExecution import ShowerExecution
 from pyVSimPipe.care.vDetectorExecution import DetectorExecution 
 from pyVSimPipe.vExecutionChain import ExecutionChain,SingularityExecutionChain 
 import logging
+import pandas as pd
 logger=logging.getLogger(__name__) 
 # 1. ExecutionChain builder
 #   - consolidate orders
@@ -68,13 +69,25 @@ class ExecutionChainBuilder:
         # loop through each shower property
         # put under the same key if shower property is the same
         found_key = False
+        no_detector_sim = False
+        # Check if any of the detector property field is None
+        for i,val in item.detector_property.get_data_as_dict().items():
+            if(pd.isnull(val)):
+                no_detector_sim = True
+                break
+                
         for i,k in enumerate(map(lambda x:x[0],order_tuple)):
             if(k == item.shower_property):
                 found_key = True
-                order_tuple[i][1].append(item.detector_property)   
+                if(not no_detector_sim):
+                    order_tuple[i][1].append(item.detector_property)   
                 break
-        if(not found_key):
+        if((not found_key) and (not no_detector_sim)):
             order_tuple.append((item.shower_property,[item.detector_property])) 
+
+
+        if((not found_key) and no_detector_sim):
+            order_tuple.append((item.shower_property,[])) 
         return order_tuple  
 
     def get_execution_chain(self):
