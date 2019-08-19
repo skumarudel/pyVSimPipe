@@ -111,7 +111,7 @@ class LaunchControl:
                 f.write(c.get_script(".qsub/run_script/{}.container.qsub".format(name)))
             script_name = ".qsub/{}.qsub".format(name) 
             if(not dry_run):
-                process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
+                process = subprocess.Popen(['sbatch',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
                 out = process.stdout.readlines()
                 err = process.stderr.readlines()
                 for ol in out:
@@ -129,7 +129,7 @@ class LaunchControl:
                 f.write(c.get_script())
             script_name = ".qsub/{}.qsub".format(name) 
             if(not dry_run):
-                process = subprocess.Popen(['qsub',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
+                process = subprocess.Popen(['sbatch',script_name],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)            
                 out = process.stdout.readlines()
                 err = process.stderr.readlines()
                 for ol in out:

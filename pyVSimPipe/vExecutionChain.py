@@ -26,9 +26,10 @@ class ExecutionChain(Execution):
         qsub_setting = self.__qsub_setting__ 
         extra_qsub_directive  = ""
         for ll in qsub_setting['optional_pbs_directive']:
-           extra_qsub_directive = extra_qsub_directive + "#PBS {}\n".format(ll) 
-        qsub_header = qsub_header_template.format(nodes=qsub_setting['nodes'],
+           extra_qsub_directive = extra_qsub_directive + "#SBATCH {}\n".format(ll) 
+        qsub_header = qsub_header_template.format(
                                            ppn  =qsub_setting['ppn'],
+                                           account = qsub_setting['account'],
                                            name =self.get_name(),
                                            optional_pbs_directive=extra_qsub_directive,
                                            qsub_dir=path.realpath("./.qsub"),
