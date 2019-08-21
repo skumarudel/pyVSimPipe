@@ -40,8 +40,6 @@ def setup():
     # copy default config file
     if(not path.exists("./config.ini")):
         copyfile("{}/share/config.ini".format(file_path),"config.ini")
-    if(not path.exists("./config_guillimin.ini")):
-        copyfile("{}/share/config_guillimin.ini".format(file_path),"config_guillimin.ini")
     # copy example order
     if(not path.exists("order.csv")):
         copyfile("{}/share/order.csv".format(file_path),"order.csv")
