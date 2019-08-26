@@ -82,14 +82,6 @@ class DetectorExecution(Execution):
         ioreader_bin = run_env['ioreader_bin']
         groptics_bin = run_env['groptics_bin']   
         care_bin     = run_env['care_bin']
-        if(run_env['scratch_dir'] !="None"):
-            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
-                                                                      ze=sp.ze,
-                                                                      scratch_dir=run_env['scratch_dir'])
-        else:
-            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
-                                                                      ze=sp.ze,
-                                                                      scratch_dir='{}/local/'.format(data_dir))
 
         log_dir='{data_dir}/log/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
                                                                  ze=sp.ze,
@@ -105,6 +97,17 @@ class DetectorExecution(Execution):
         primary_code = particle_code[sp.primary]
         runnum=int('{:<05d}'.format(primary_code))
         output_file_name_base, extname= path.splitext(path.basename(self.__exit__)) 
+        if(run_env['scratch_dir'] !="None"):
+            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+                                                                      ze=sp.ze,
+                                                                      scratch_dir=run_env['scratch_dir'],
+                                                                      output_file_name_base=output_file_name_base)
+        else:
+            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+                                                                      ze=sp.ze,
+                                                                      scratch_dir='{}/local/'.format(data_dir),
+                                                                      output_file_name_base=output_file_name_base)
+
         script = script_template.format(ioreader_bin = ioreader_bin,
                                         groptics_bin = groptics_bin,
                                         care_bin = care_bin,

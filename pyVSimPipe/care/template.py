@@ -103,7 +103,7 @@ unlink ./GrOpticsConfig
 unlink ./CARE_config
 unlink ./data
 
-rm ./*
+rm -r $local_dir 
  
 '''
 
