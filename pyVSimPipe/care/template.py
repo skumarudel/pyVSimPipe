@@ -96,7 +96,7 @@ fi
 
 $ioreader_bin -queff 0.5 -cors $corsika_file -seed $(date +%s$f) -grisu stdout -abs $abs_file -cfg ./GrOpticsConfig/IOReaderDetectorConfigV6.txt | $groptics_bin -of ./"$name_base".groptics.root  -p $pilot_file   &> $log_dir/"$name_base".groptics.log
 
-$care_bin NSBRATEPERPIXEL "0 $NOISE" --seed $(date +%s$f) --configfile ./CARE_config/CARE_V6_Std.txt --outputfile "$name_base" --inputfile "$name_base".groptics.root --vbfrunnumber $runnum  --writepedestals 1 --notraces &> $log_dir/"$name_base".care.log 
+$care_bin NSBRATEPERPIXEL "0 $NOISE" TRANSITTIMESPREAD "0 0" TRANSITTIMESPREAD "1 0" TRANSITTIMESPREAD "2 0" TRANSITTIMESPREAD "3 0" --seed $(date +%s$f) --configfile ./CARE_config/CARE_V6_Std.txt --outputfile "$name_base" --inputfile "$name_base".groptics.root --vbfrunnumber $runnum  --writepedestals 1 --notraces &> $log_dir/"$name_base".care.log 
 
 mv "$name_base".vbf $output_dir/ 
 unlink ./GrOpticsConfig
