@@ -73,8 +73,16 @@ cat > $input_file <<- EOM
 {input_file_text}
 EOM
 
+force_rerun_corsika={force_rerun_corsika}
+
+if [ -f "$output_file" ]; then
+    output_file_exist=True
+fi 
+
 cd $(dirname $corsika_bin)
-$corsika_bin < $input_file &> $log_file
+if [ ! "$output_file_exist"=="True" ] || [ "$force_rerun_corsika"=="True" ];then
+    $corsika_bin < $input_file &> $log_file
+fi
 # done 
 mv $output_file_tmp $output_file
 
