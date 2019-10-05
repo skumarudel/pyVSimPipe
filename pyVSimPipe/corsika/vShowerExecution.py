@@ -82,5 +82,5 @@ class ShowerExecution(Execution):
                                         local_dir=local_dir,
                                         exit=self.__exit__,
                                         input_file_text=input_file_text,
-                                        force_rerun_corsika=run_env['check_corsika_file_exist'])
+                                        check_corsika_file_exist=run_env['check_corsika_file_exist'])
         return script 
