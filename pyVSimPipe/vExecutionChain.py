@@ -67,7 +67,8 @@ class SingularityExecutionChain(ExecutionChain):
                    'ioreader_bin':'/software/corsikaSimulationTools/corsikaIOreader',
                    'groptics_bin':'/software/GrOptics/grOptics',
                    'care_bin':'/software/CARE/CameraAndReadout',
-                   'data_dir':'$HOME/'
+                   'data_dir':'$HOME/',
+                   'check_corsika_file_exist':singularity_setting['check_corsika_file_exist']                
                   }
 
         super().__init__(run_env,qsub_setting)
