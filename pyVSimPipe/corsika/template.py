@@ -66,6 +66,8 @@ mkdir -p $log_dir
 mkdir -p $input_dir
 mkdir -p $local_dir
 
+#make local run folder
+mkdir -p "$local_dir/$(basename $output_file).run"
 output_file_tmp=$local_dir/$(basename $output_file)
 
 # Generate input file
@@ -79,13 +81,20 @@ if [ -f "$output_file" ]; then
     output_file_exist=True
 fi 
 
-cd $(dirname $corsika_bin)
+#cd $(dirname $corsika_bin)
+cd "$local_dir/$(basename $output_file).run"
+
+for f in $(dirname $corsika_bin)/*;do
+        ln -sT $f $(basename $f)
+done
+
 if [ ! "$output_file_exist" = "True" ] || [ "$check_corsika_file_exist" = "False" ];then
     $corsika_bin < $input_file &> $log_file
     # done 
     mv $output_file_tmp $output_file
 fi
-
+# remove link for running environment
+rm -rf "$local_dir/$(basename $output_file).run"
 
 
 '''
