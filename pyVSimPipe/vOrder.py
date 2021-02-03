@@ -51,7 +51,8 @@ class VShowerProperty(Record):
         self.index     = order_dict['index']
         self.reuse     = order_dict['reuse'] 
         self.seed      = [order_dict['seed0'],order_dict['seed1'],order_dict['seed2'],order_dict['seed3']]
-
+        self.simtype   = order_dict['simtype']
+        
 class VOrderRecord(Record):
     def __init__(self,order_dict):
         # Shower property

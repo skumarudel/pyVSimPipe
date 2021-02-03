@@ -7,6 +7,7 @@ ERANGE {elow_GeV:d} {ehigh_GeV:d}
 ESLOPE -{index:.1f}
 THETAP {ze:.1f} {ze:.1f} 
 PHIP 0. 360.
+VIEWCONE 0. {simtype:.1f}
 SEED {seed:d}  0 0
 SEED {seed1:d} 0 0
 SEED {seed2:d} 0 0

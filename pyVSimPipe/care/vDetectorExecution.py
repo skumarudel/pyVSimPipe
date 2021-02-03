@@ -7,7 +7,7 @@ from os import path
 class DetectorExecution(Execution):
     def __init__(self,shower_property,detector_property,
                       run_env,existed_entry=None):
-       input_file_name_template = 'corsika_{primary}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}'
+       input_file_name_template = 'corsika_{simtype}_{primary}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}'
        ifname = input_file_name_template.format(atm=shower_property.atm,
                                                  primary=shower_property.primary,
                                                  ze =shower_property.ze,
@@ -15,6 +15,7 @@ class DetectorExecution(Execution):
                                                  ehigh=shower_property.ehigh,
                                                  index=shower_property.index,
                                                  nshower=shower_property.nshower,
+                                                 simtype=shower_property.simtype,
                                                  reuse=shower_property.reuse,
                                                  s0=shower_property.seed[0],
                                                  s1=shower_property.seed[1],
@@ -26,14 +27,15 @@ class DetectorExecution(Execution):
        else:
            data_dir = run_env['data_dir']
        if(existed_entry is None):
-           entry='{data_dir}/Shower/ATM{atm}/Ze_{ze}/{fname}.tel'.format(atm=shower_property.atm,
+           entry='{data_dir}/Shower/ATM{atm}/{simtype}/Ze_{ze}/{fname}.tel'.format(atm=shower_property.atm,
                                                                             ze=shower_property.ze,
                                                                             fname=ifname,
+                                                                            simtype=shower_property.simtype,
                                                                             data_dir=data_dir)
        else:
            entry = existed_entry 
 
-       output_file_name_template='CARE_{primary}_{epoch}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}_Wobble_{wobble_angle:.1f}{wobble_dir}_Noise_{noise_level:03d}MHz.vbf' 
+       output_file_name_template='CARE_{simtype}_{primary}_{epoch}_ATM{atm}_Ze{ze}_elow{elow}TeV_ehigh{ehigh}TeV_index{index}_nshower{nshower:d}_reuse{reuse:d}_seed0_{s0}_seed1_{s1}_seed2_{s2}_seed3_{s3}_Wobble_{wobble_angle:.1f}{wobble_dir}_Noise_{noise_level:03d}MHz.vbf' 
        ofname = output_file_name_template.format(atm=shower_property.atm,
                                                  primary=shower_property.primary,
                                                  ze =shower_property.ze,
@@ -41,6 +43,7 @@ class DetectorExecution(Execution):
                                                  ehigh=shower_property.ehigh,
                                                  index=shower_property.index,
                                                  nshower=shower_property.nshower,
+                                                 simtype=shower_property.simtype,
                                                  reuse=shower_property.reuse,
                                                  s0=shower_property.seed[0],
                                                  s1=shower_property.seed[1],
@@ -50,8 +53,9 @@ class DetectorExecution(Execution):
                                                  wobble_dir=detector_property.wobble_dir,
                                                  noise_level=int(detector_property.noise_level),
                                                  epoch=detector_property.epoch)
-       exit = '{data_dir}/CARE/{epoch}/ATM{atm}/{fname}'.format(epoch=detector_property.epoch,
+       exit = '{data_dir}/CARE/{epoch}/ATM{atm}/{simtype}/{fname}'.format(epoch=detector_property.epoch,
                                                                atm=shower_property.atm,
+                                                                simtype=shower_property.simtype,
                                                                fname=ofname,
                                                                data_dir=data_dir) 
        super().__init__(run_env,entry,exit) 
@@ -83,7 +87,8 @@ class DetectorExecution(Execution):
         groptics_bin = run_env['groptics_bin']   
         care_bin     = run_env['care_bin']
 
-        log_dir='{data_dir}/log/CARE/ATM{atm}/Ze_{ze}/'.format(atm=sp.atm,
+        log_dir='{data_dir}/log/CARE/ATM{atm}/{simtype}/Ze_{ze}/'.format(atm=sp.atm,
+                                                                         simtype=sp.simtype,
                                                                  ze=sp.ze,
                                                                  data_dir=data_dir)
         if(sp.atm == 61):
@@ -98,12 +103,14 @@ class DetectorExecution(Execution):
         runnum=int('{:<05d}'.format(primary_code))
         output_file_name_base, extname= path.splitext(path.basename(self.__exit__)) 
         if(run_env['scratch_dir'] !="None"):
-            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+            local_dir='{scratch_dir}/CARE/ATM{atm}/{simtype}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+                                                                                                     simtype=sp.simtype,
                                                                       ze=sp.ze,
                                                                       scratch_dir=run_env['scratch_dir'],
                                                                       output_file_name_base=output_file_name_base)
         else:
-            local_dir='{scratch_dir}/CARE/ATM{atm}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+            local_dir='{scratch_dir}/CARE/ATM{atm}/{simtype}/Ze_{ze}/{output_file_name_base}'.format(atm=sp.atm,
+                                                                                           simtype=sp.simtype,
                                                                       ze=sp.ze,
                                                                       scratch_dir='{}/local/'.format(data_dir),
                                                                       output_file_name_base=output_file_name_base)
